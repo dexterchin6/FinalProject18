@@ -1,10 +1,12 @@
 #=============================================================================================================================================#
 #[Import Bay]#
-import os,time,math,random
+from os import system
+import time,math,random
 #=============================================================================================================================================#
 #[Syntax Functions]#
 def halfscreen():
     """moves cursor to the vertical center of the screen"""
+    system('clear')
     for x in range(12):
         print("")
     return
@@ -13,15 +15,18 @@ def enternclear():
     print("")
     input("Press Enter to Continue: ")
     return
+def rendernclear():
+    """ensures text is fully loaded before clearing"""
+    time.sleep(1)
+    return
 def pausenclear():
     """creates a pause before continuing"""
-    time.sleep(4)
+    time.sleep(1.5)
     return
-def notsuitableyn():
-    """sequence of events when user input is not 'y' or 'n'"""
-    print("")
-    print("That is not a suitable answer. Enter either 'Y' or 'N'.")
-    enternclear()
+def test():
+    """used for finding where errors are"""
+    print('test')
+    time.sleep(2)
     return
 #=============================================================================================================================================#
 #[Global Libraries]#
@@ -64,7 +69,7 @@ specialconfirms = {
     }
 distant_counters = []
 
-characters = []
+characters = ['Robin','a','b','c','d','e','f','g','h','i']
 #=============================================================================================================================================#
 #[Data Cores]#
 class WeaponData:
@@ -104,8 +109,197 @@ class CharacterData:
         self.team = team
         self.bio = bio
         return
+    def biography(self):
+        """prints all data of a character"""
+        def personalbio():
+            weapon = eval(eval(self.dataname)['Weapon'])
+            system('clear')
+            print("--------------------------------------------------------------------")
+            print(f"{self.fullname}: {self.tier}")
+            print(f"{self.movetype} Unit")
+            print(self.based)
+            print("")
+            print(self.rank)
+            print(self.team)
+            print("")
+            print(self.bio)
+            print("")
+            print(f"{weapon.weapname}:")
+            print(weapon.weapbio)
+            print("--------------------------------------------------------------------")
+            enternclear()
+            return
+        def statbio():
+            system('clear')
+            print("--------------------------------------------------------------------")
+            print(self.fullname)
+            print(f"{self.classtype} Fighter")
+            print("")
+            print(f"{eval(self.dataname)['Health']} HP")
+            print(f"{eval(self.dataname)['Attack']} ATK")
+            print(f"{eval(self.dataname)['Speed']} SPD")
+            print(f"{eval(self.dataname)['Defense']} DEF")
+            print(f"{eval(self.dataname)['Resistance']} RES")
+            print(f"Critical Chance: {eval(self.dataname)['Critical']}%")
+            enternclear()
+            return
+        personalbio()
+        statbio()
+        return
+    def chargain(self,i):
+        """sequence of events when a new character is gained"""
+        characters.append(self.calcname)
+        halfscreen()
+        if i == 0:
+            print(f"{self.brackname} has joined your list of characters! {self.brackname} will be available for you to use in battle. Any new versions of this character gained throughout the game will also be available for you to use.")
+        elif i == 1:
+            print(f"{self.brackname} has joined your list of characters! {self.brackname} will be available for you to use in battle.")
+        pausenclear()
+        self.biography()
+        return
 #=============================================================================================================================================#
 #[Battle Cores]#
+def pickteam():
+    """sequence of events to pick teams for battle"""
+    def pick():
+        """sequence of events to pick the player`s team"""
+        def notsuitableyn():
+            """sequence of events when user input is not 'y' or 'n'"""
+            print("")
+            print("That is not a suitable answer. Enter either 'Y' or 'N'.")
+            enternclear()
+            return
+        def print_curparty(party):
+            """prints the player`s current party"""
+            print(f"Current party: {party}")
+            print("")
+            return
+        namecompare = {
+            'Robin' : 'Robin',
+            'a' : 'a',
+            'b' : 'b',
+            'c' : 'c',
+            'd' : 'd',
+            'e' : 'e',
+            'f' : 'f',
+            'g' : 'g',
+            'h' : 'h',
+            'i' : 'i'
+            }
+        playerparty = []
+        ncompare = []
+        available = characters
+        d = dd = 0
+        while True:
+            if d == 1:
+                break
+            if len(playerparty) == 0:
+                while True:
+                    system('clear')
+                    print(available)
+                    print("")
+                    c = input("Choose a character to put into battle (Names are CaSe SeNsItIvE): ")
+                    if c not in available:
+                        print("")
+                        print("That character is not available.")
+                        enternclear()
+                    else:
+                        ncompare.append(namecompare[c])
+                        playerparty.append(c)
+                        available.remove(c)
+                        rendernclear()
+                        halfscreen()
+                        print(f"{c} has been added to your party!")
+                        print("")
+                        print_curparty(playerparty)
+                        rendernclear()
+                        break
+            while len(playerparty) >= 1:
+                if len(playerparty) == 8:
+                    while True:
+                        system('clear')
+                        print_curparty(playerparty)
+                        print("")
+                        c2 = input("Confirm team? [Y/N]: ").lower()
+                        if c2 == 'y':
+                            d = 1
+                            dd = 1
+                            break
+                        elif c2 == 'n':
+                            break
+                        else:
+                            notsuitableyn()
+                    if dd == 1:
+                        break
+                    if len(playerparty) == 8:
+                        while True:
+                            system('clear')
+                            print_curparty(playerparty)
+                            c3 = input("Choose a character to remove (Names are CaSe SeNsItIvE): ")
+                            if c3 not in playerparty:
+                                print("")
+                                print("That character is not in your party.")
+                                enternclear()
+                            else:
+                                playerparty.remove(c3)
+                                available.append(c3)
+                                ncompare.remove(namecompare[c3])
+                                print("")
+                                print("{c3} has left your party.")
+                                break
+                system('clear')
+                print_curparty(playerparty)
+                c4 = input("Add or remove a character? [Add/Remove]: ").lower()
+                if c4 == 'add':
+                    while True:
+                        system('clear')
+                        print(f"Available characters: {available}")
+                        print("")
+                        print_curparty(playerparty)
+                        c5 = input("Choose a character to put into battle (Names are CaSeSeNsItIvE): ")
+                        if c5 not in available:
+                            print("")
+                            print("That character is not available.")
+                            enternclear()
+                        elif namecompare[c5] in ncompare:
+                            print("A version of that character has already been chosen. You cannot have multiple versions of the same character in your party.")
+                            enternclear()
+                        else:
+                            ncompare.append(namecompare[c5])
+                            playerparty.append(c5)
+                            available.remove(c5)
+                            pausenclear()
+                            halfscreen()
+                            print(f"{c5} has been added to your party!")
+                            print("")
+                            print_curparty(playerparty)
+                            pausenclear()
+                            break
+                elif c4 == 'remove':
+                    while True:
+                        system('clear')
+                        print_curparty(playerparty)
+                        c6 = input("Choose to remove either a character or 'Noone' (Names are CaSe SeNsItIvE): ").lower()
+                        if c6 == 'noone':
+                            break
+                        elif c6 not in playerparty:
+                            print("That character is not in your party.")
+                            enternclear()
+                        else:
+                            playerparty.remove(c6)
+                            available.append(c6)
+                            ncompare.remove(namecompare[c6])
+                            print("")
+                            print("{c6} has left your party.")
+                            break
+                else:
+                    notsuitableyn()
+        return playerparty
+    if len(characters) <= 8:
+        playerparty = characters
+    else:
+        playerparty = pick()
+    return playerparty
 def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
     """sequence of events during a skirmish"""
     def rnd(val):
@@ -145,7 +339,7 @@ def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
                 print(f"{attacker.brackname} has landed a critical hit! {attacker.critspeech}, {attacker.critpronoun}.")
                 print("--------------------------------------------------------------------------------------------------------------")
                 time.sleep(2)
-                os.system('clear')
+                system('clear')
                 time.sleep(2)
                 halfscreen()
                 print(specials[attacker.calcname])
@@ -153,7 +347,7 @@ def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
                 print(" ")
                 print(specialconfirms[attacker.calcname])
                 time.sleep(3)
-                os.system('clear')
+                system('clear')
                 time.sleep(1)
                 print("--------------------------------------------------------------------------------------------------------------")
                 print(f"{defender.brackname} was struck forecefully!")
@@ -238,7 +432,7 @@ def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
                 print(f"{defender.brackname} has landed a critical hit! {defender.critspeech}, {defender.critpronoun}.")
                 print("--------------------------------------------------------------------------------------------------------------")
                 time.sleep(2)
-                os.system('clear')
+                system('clear')
                 time.sleep(2)
                 halfscreen()
                 print(specials[defender.calcname])
@@ -246,7 +440,7 @@ def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
                 print(" ")
                 print(specialconfirms[defender.calcname])
                 time.sleep(3)
-                os.system('clear')
+                system('clear')
                 time.sleep(1)
                 print("--------------------------------------------------------------------------------------------------------------")
                 print(f"{attacker.brackname} was struck forecefully!")
@@ -286,7 +480,7 @@ def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
         damage = rnd((ea*m*critm) - bloc)
         uh = dmgrev(damage,uh)
         return uh,ua,us,ud,ur,uc
-    os.system('clear')
+    system('clear')
     eh,ea,es,ed,er,ec = attack(ua,uc,eh,ea,es,ed,er,ec,0)
     cc = ifcounter(eh)
     if cc == 1:
@@ -294,12 +488,14 @@ def skirmish(attacker,defender,uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec):
         uh,ua,us,ud,ur,uc = counter(uh,ua,us,ud,ur,uc,ea,ec,0)
     ues = es + 10
     if ues < us:
-        os.system('clear')
+        system('clear')
         eh,ea,es,ed,er,ec = attack(ua,uc,eh,ea,es,ed,er,ec,1)
     uus = us + 10
     if uus < es:
         if ues > us:
-            os.system('clear')
+            print("")
+        else:
+            system('clear')
         uh,ua,us,ud,ur,uc = counter(uh,ua,us,ud,ur,uc,ea,ec,1)
     return uh,ua,us,ud,ur,uc,eh,ea,es,ed,er,ec
 #=============================================================================================================================================#
@@ -319,7 +515,7 @@ OrigRobinData = {
     'Critical' : OrigRobin.bcrit
     }
 #=============================================================================================================================================#
-
+pickteam()
 
 
 
